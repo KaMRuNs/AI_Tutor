@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy>=2
+pydantic>=2
+httpx
+pymupdf
+python-multipart
+numpy
+pytest
+ruff
