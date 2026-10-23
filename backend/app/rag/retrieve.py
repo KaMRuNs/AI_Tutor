@@ -18,6 +18,7 @@ from app.llm.client import LLMClient
 
 _TOKEN = re.compile(r"[\wঀ-৿]+", re.UNICODE)
 MIN_COSINE = 0.45
+MIN_BM25 = 1.0
 RRF_K = 60
 
 
@@ -72,8 +73,13 @@ async def retrieve(db: Session, llm: LLMClient, user_id: int, course_id: int, qu
     chunks = [r[0] for r in rows]
     names = {r[0].id: r[1] for r in rows}
 
-    kw = bm25_scores(tokenize(query), [tokenize(c.heading + " " + c.content) for c in chunks])
-    ranked_kw = [i for i in sorted(range(len(chunks)), key=lambda i: -kw[i]) if kw[i] > 0][:20]
+    q_tokens = tokenize(query)
+    doc_tokens = [tokenize(c.heading + " " + c.content) for c in chunks]
+    kw = bm25_scores(q_tokens, doc_tokens)
+    # A single common word is not evidence: need a strong score or 2+ distinct query terms.
+    hits = [len(set(q_tokens) & set(d)) for d in doc_tokens]
+    ranked_kw = [i for i in sorted(range(len(chunks)), key=lambda i: -kw[i])
+                 if kw[i] >= MIN_BM25 or hits[i] >= 2][:20]
 
     cos: list[float] = [0.0] * len(chunks)
     ranked_vec: list[int] = []

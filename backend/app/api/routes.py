@@ -57,7 +57,7 @@ async def health() -> dict:
         pass
     return {"ollama": ok, "llm_model": config.LLM_MODEL,
             "llm_available": any(m.startswith(config.LLM_MODEL) for m in models),
-            "embed_available": any(m.startswith(config.EMBED_MODEL) for m in models)}
+            "embed_available": bool(config.EMBED_MODEL) and any(m.startswith(config.EMBED_MODEL) for m in models)}
 
 
 # ---------- courses ----------

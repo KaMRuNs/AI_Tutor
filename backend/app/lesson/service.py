@@ -73,7 +73,8 @@ async def create_lesson(db: Session, llm: LLMClient, user_id: int, course_id: in
         text = await llm.chat(messages[:1] + [{"role": "user", "content": user +
                               "\n\nAnswer in short paragraphs of plain text."}])
         steps_raw = _text_fallback_steps(text)
-        title, concept_name, check = question[:120], question[:60], None
+        # No reliable concept name without structured output; don't invent one from the question.
+        title, concept_name, check = question[:120], None, None
     else:
         steps_raw = [s.model_dump() for s in out.steps]
         title, concept_name, check = out.title, out.concept, out.check_question
@@ -81,8 +82,9 @@ async def create_lesson(db: Session, llm: LLMClient, user_id: int, course_id: in
     conv = Conversation(user_id=user_id, course_id=course_id)
     db.add(conv)
     db.flush()
-    concept = get_or_create_concept(db, course_id, concept_name)
-    lesson = Lesson(user_id=user_id, conversation_id=conv.id, course_id=course_id, concept_id=concept.id,
+    concept = get_or_create_concept(db, course_id, concept_name) if concept_name else None
+    lesson = Lesson(user_id=user_id, conversation_id=conv.id, course_id=course_id,
+                    concept_id=concept.id if concept else None,
                     question=question, title=title, language=language, fallback=fallback,
                     check_question=check, grounded=grounded)
     db.add(lesson)

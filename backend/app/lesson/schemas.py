@@ -65,6 +65,22 @@ class QuizOut(BaseModel):
     items: list[QuizItemOut] = Field(min_length=1, max_length=6)
 
 
+class _StrictQuizItem(BaseModel):
+    type: Literal["mcq", "numeric", "short"]
+    question: str
+    options: list[str] = Field(min_length=4, max_length=4, description="4 choices; for mcq the answer is one of them")
+    answer: str
+    explanation: str
+    concept: str = Field(max_length=40)
+
+
+class _StrictQuiz(BaseModel):
+    items: list[_StrictQuizItem] = Field(min_length=2, max_length=5)
+
+
+QUIZ_GRAMMAR = _StrictQuiz.model_json_schema()
+
+
 class FeedbackOut(BaseModel):
     correct: bool
     explanation: str

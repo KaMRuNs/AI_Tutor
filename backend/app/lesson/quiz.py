@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.models import Assessment, Concept, Lesson, QuizItem
-from app.lesson.schemas import LANGUAGE_RULES, FeedbackOut, QuizItemOut, QuizOut
+from app.lesson.schemas import LANGUAGE_RULES, QUIZ_GRAMMAR, FeedbackOut, QuizItemOut, QuizOut
 from app.lesson.service import lesson_chunks_text, lesson_steps
 from app.llm.client import LLMClient, generate_structured, load_prompt
 from app.memory.grading import grade_mcq, grade_numeric, normalize, parse_number
@@ -15,13 +15,18 @@ from app.memory.mastery import add_misconception, get_or_create_concept, record_
 log = logging.getLogger(__name__)
 
 
-def _usable(item: QuizItemOut) -> bool:
+def _repair(item: QuizItemOut) -> QuizItemOut | None:
+    """MCQ/numeric items that can't be graded deterministically become short-answer items."""
+    if not item.question.strip() or not item.answer.strip():
+        return None
     if item.type == "mcq":
-        return bool(item.options) and len(item.options) >= 2 and \
-            normalize(item.answer) in {normalize(o) for o in item.options}
-    if item.type == "numeric":
-        return parse_number(item.answer) is not None
-    return bool(item.answer.strip())
+        opts = [o for o in item.options or [] if o.strip()]
+        if len(opts) >= 2 and normalize(item.answer) in {normalize(o) for o in opts}:
+            return item.model_copy(update={"options": opts})
+        return item.model_copy(update={"type": "short", "options": None})
+    if item.type == "numeric" and parse_number(item.answer) is None:
+        return item.model_copy(update={"type": "short", "options": None})
+    return item.model_copy(update={"options": None})
 
 
 async def generate_quiz(db: Session, llm: LLMClient, lesson: Lesson, n: int = 3) -> list[QuizItem]:
@@ -30,13 +35,14 @@ async def generate_quiz(db: Session, llm: LLMClient, lesson: Lesson, n: int = 3)
     user = (f"LESSON: {lesson.title}\n" + "\n".join(s.say for s in steps) +
             f"\n\nCOURSE PASSAGES:\n{lesson_chunks_text(db, steps)}")
     out = await generate_structured(llm, QuizOut, [{"role": "system", "content": system},
-                                                   {"role": "user", "content": user}])
+                                                   {"role": "user", "content": user}], json_schema=QUIZ_GRAMMAR)
     items: list[QuizItem] = []
     if out is None:
         return items
-    for it in out.items:
-        if not _usable(it):
-            log.info("dropping unusable quiz item: %s", it)
+    for raw in out.items:
+        it = _repair(raw)
+        if it is None:
+            log.info("dropping unusable quiz item: %s", raw)
             continue
         concept_id = lesson.concept_id
         if it.concept:

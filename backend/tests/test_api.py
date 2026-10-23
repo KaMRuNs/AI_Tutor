@@ -30,9 +30,11 @@ QUIZ = {"items": [
 class FakeLLM:
     def __init__(self, fail_schema: bool = False, down: bool = False):
         self.fail_schema, self.down, self.calls = fail_schema, down, 0
+        self.prompts: list[str] = []
 
     async def chat(self, messages, schema=None):
         self.calls += 1
+        self.prompts.append(messages[-1]["content"])
         if self.down:
             raise LLMError("down")
         if schema is None:
@@ -68,7 +70,8 @@ def _setup(client, tmp_path):
 
 
 def test_full_flow(tmp_path):
-    set_llm(FakeLLM())
+    fake = FakeLLM()
+    set_llm(fake)
     with TestClient(app) as client:
         course = _setup(client, tmp_path)
         docs = client.get("/api/documents", params={"course_id": course["id"]}).json()
@@ -96,8 +99,8 @@ def test_full_flow(tmp_path):
             assert ans["type"] == "teacher.answer" and ans["data"]["citations"][0]["id"] == "chunk_1"
 
         quiz = client.post("/api/quizzes", json={"lesson_id": lesson["id"]}).json()
-        assert len(quiz["items"]) == 2                                         # invalid mcq dropped
-        mcq, num = quiz["items"]
+        mcq, num, repaired = quiz["items"]
+        assert repaired["type"] == "short" and repaired["options"] is None     # ungradable mcq → short
         res = client.post(f"/api/quizzes/{lesson['id']}/submit",
                           json={"answers": {str(mcq["id"]): "O(n)", str(num["id"]): "৩"}}).json()
         assert res["score"] == 1 and res["total"] == 2
@@ -106,6 +109,12 @@ def test_full_flow(tmp_path):
         assert prof["mastery"][0]["concept"] == "Binary search"
         assert prof["misconceptions"][0]["evidence"]["type"] == "assessment"
         assert client.get("/api/revision-plan").json()[0]["concept"] == "Binary search"
+
+        # The next relevant lesson sees the recorded mistake; an unrelated one does not.
+        client.post("/api/lessons", json={"course_id": course["id"], "question": "binary search আবার বোঝাও"})
+        assert 'instead of "O(log n)"' in fake.prompts[-1]
+        client.post("/api/lessons", json={"course_id": course["id"], "question": "deadlock কী?"})
+        assert "instead of" not in fake.prompts[-1]
 
         assert client.delete("/api/me/data").json()["ok"]
         assert client.get("/api/learning-profile").json()["misconceptions"] == []
