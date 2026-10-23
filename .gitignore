@@ -1,51 +1,9 @@
-# Python
+data/uploads/
+data/*.db
+backend/.venv/
 __pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-.Python
-*.egg
-*.egg-info/
-dist/
-build/
-.eggs/
-.venv/
-venv/
-env/
-.env
-.env.*
-pip-log.txt
-pip-delete-this-directory.txt
-
-# pytest / ruff caches
 .pytest_cache/
 .ruff_cache/
-.mypy_cache/
-.coverage
-htmlcov/
-
-# Node / Next.js
-node_modules/
-.next/
-out/
-*.tsbuildinfo
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# IDE
-.idea/
-.vscode/
-*.suo
-*.user
-
-# Database & uploads (sensitive / large binary)
-data/teacher.db
-data/uploads/
-
-# Video recordings
+frontend/node_modules/
+frontend/.next/
 *.mp4
-*.mov
-*.avi
