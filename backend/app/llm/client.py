@@ -7,6 +7,7 @@ so callers can fall back to text-only.
 
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Protocol, TypeVar
 
@@ -19,6 +20,7 @@ log = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
 
 PROMPT_DIR = Path(__file__).parent / "prompts"
+EMBED_COOLDOWN_S = 120
 
 
 def load_prompt(name: str) -> str:
@@ -41,11 +43,12 @@ class OllamaClient:
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.embed_model = embed_model
-        self._embed_ok: bool | None = None
+        self._embed_retry_at = 0.0
 
     async def chat(self, messages: list[dict], schema: dict | None = None) -> str:
-        body: dict = {"model": self.model, "messages": messages, "stream": False,
-                      "options": {"temperature": 0.4, "num_ctx": 8192}}
+        body: dict = {"model": self.model, "messages": messages, "stream": False, "keep_alive": "30m",
+                      "options": {"temperature": 0.4, "num_ctx": config.LLM_NUM_CTX,
+                                  "num_predict": config.LLM_MAX_TOKENS}}
         if schema is not None:
             body["format"] = schema
         try:
@@ -58,18 +61,19 @@ class OllamaClient:
 
     async def embed(self, texts: list[str]) -> list[list[float]] | None:
         """Returns None when the embedding model is unavailable (retrieval then uses keywords only)."""
-        if self._embed_ok is False or not texts:
+        if not self.embed_model or not texts or time.monotonic() < self._embed_retry_at:
             return None
         try:
             async with httpx.AsyncClient(timeout=config.LLM_TIMEOUT) as client:
                 r = await client.post(f"{self.base_url}/api/embed",
                                       json={"model": self.embed_model, "input": texts})
                 r.raise_for_status()
-                self._embed_ok = True
                 return r.json()["embeddings"]
         except (httpx.HTTPError, KeyError) as e:
-            log.warning("embedding unavailable (%s); using keyword retrieval only", e)
-            self._embed_ok = False
+            # Back off instead of disabling for good: failures are often a model swap on low-RAM machines.
+            log.warning("embedding unavailable (%s: %s); keyword retrieval for %ds",
+                        type(e).__name__, e, EMBED_COOLDOWN_S)
+            self._embed_retry_at = time.monotonic() + EMBED_COOLDOWN_S
             return None
 
 

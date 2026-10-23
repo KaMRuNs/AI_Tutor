@@ -2,7 +2,8 @@ You write short quizzes for university CSE students.
 
 - Language mode: {language_rule}
 - Write exactly {n} questions about the lesson below, grounded in the course passages.
-- Prefer "mcq" (4 options, "answer" must be exactly one of the options) and "numeric" ("answer" is a number only).
+- Prefer "mcq": give exactly 4 "options" and copy the correct option text exactly into "answer".
+- "numeric": "answer" is a plain number only, like 3 (no words, no formulas). Fill "options" with 4 empty strings.
 - Use "short" only when the idea cannot be tested otherwise; then "answer" is a one-sentence model answer.
 - "explanation" says why the answer is correct.
 - "concept" is the main concept name in English (e.g. "Binary search").

@@ -5,7 +5,11 @@ Bangla AI Teacher: a personal AI tutor for university CSE students. It teaches f
 - Product plan and scope: [plan.md](plan.md)
 - System design, schemas, flows: [architecture.md](architecture.md)
 
-## Repo layout (planned — not yet scaffolded)
+## Repo layout
+
+Implemented: backend (all of `app/` except `voice/`), frontend pages (dashboard, library, classroom, progress), tests, demo seed, `evals/`. Not yet: docker-compose, Alembic migrations (tables are created by `init_db()`), server-side STT/TTS (browser Web Speech APIs are used for now).
+
+Deviations from plan.md because the dev machine has no Docker/uv/pnpm: **SQLite** (`data/teacher.db`, set `DATABASE_URL` for Postgres), embeddings stored as JSON and scored with numpy, plain `venv` + pip, npm.
 
 ```
 frontend/   Next.js (App Router) + TypeScript + Tailwind + shadcn/ui
@@ -26,16 +30,23 @@ data/       uploaded files (gitignored), seed demo PDF
 docker-compose.yml
 ```
 
-## Commands (update once scaffolded)
+## Commands
 
 ```sh
-ollama pull gemma3:4b
-docker compose up -d db
-cd backend && uv sync && uv run alembic upgrade head && uv run uvicorn app.main:app --reload
-cd frontend && pnpm install && pnpm dev
-cd backend && uv run pytest
-uv run python evals/run.py
+ollama pull gemma3:4b              # optional: ollama pull bge-m3 and set EMBED_MODEL=bge-m3 (needs ≥16 GB RAM)
+# backend (http://localhost:8000)
+cd backend && python -m venv .venv && .venv/Scripts/pip install -r requirements.txt
+cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+cd backend && .venv/Scripts/python scripts/seed_demo.py      # demo course + generated CSE lecture PDF
+cd backend && .venv/Scripts/python -m pytest -q && .venv/Scripts/ruff check app tests scripts
+# frontend (http://localhost:3000)
+cd frontend && npm install && npm run dev
+cd frontend && npx tsc --noEmit && npm run lint && npm run build
 ```
+
+Evals (real Ollama, from `backend/`): `.venv/Scripts/python ../evals/run.py [--lessons 3]` — retrieval@5, off-topic refusal, schema-valid rate. Note `--lessons` writes real lessons into `data/teacher.db`.
+
+Tests use a fake LLM (`set_llm`) and need no Ollama. The dev machine is 7 GB RAM, CPU-only: a lesson takes ~2.5–3.5 min, so embeddings are off by default (bge-m3 evicts gemma from RAM) and `num_ctx` is 4096. Last eval: retrieval 16/16, off-topic 3/3, schema-valid 3/3.
 
 ## Hard rules
 
@@ -58,3 +69,5 @@ uv run python evals/run.py
 - Prompts live in `backend/app/llm/prompts/` as versioned files, not inline strings.
 - When changing a prompt or schema, run `evals/` and note the schema-valid rate.
 - Windows dev machine: use cross-platform paths and scripts.
+- Strict JSON schemas (`*_GRAMMAR` in `app/lesson/schemas.py`) constrain Ollama; parsing uses lenient models, and board commands are filtered one by one by `BoardState` so one bad command never fails a lesson.
+- UI theme: light edtech style modelled on shikho.com — navy text `#232C6A`, magenta primary `#CF278D`, blue `#5468FF`, yellow `#FFB612`, pastel gradient cards, Baloo Da 2 (Bangla) + Poppins. Tokens live in `frontend/app/globals.css` `@theme`. Don't copy Shikho's logo, text or images.
