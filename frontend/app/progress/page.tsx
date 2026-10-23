@@ -40,8 +40,8 @@ export default function ProgressPage() {
     <div className="space-y-6 pt-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-medium text-white">Your progress</h1>
-          <p className="mt-1 text-sm text-dim">Mastery is computed only from quiz results, never from chat frequency.</p>
+          <h1 className="text-3xl font-medium text-navy">Your progress</h1>
+          <p className="mt-1 text-sm text-muted">Mastery is computed only from quiz results, never from chat frequency.</p>
         </div>
         <div className="flex gap-2">
           <a href={api.exportUrl()} className="pill pill-ghost" target="_blank" rel="noreferrer">
@@ -66,16 +66,16 @@ export default function ProgressPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="glass p-6">
-          <h2 className="mb-4 text-lg font-medium text-white">Concept mastery</h2>
+          <h2 className="mb-4 text-lg font-medium text-navy">Concept mastery</h2>
           {!profile?.mastery.length ? (
-            <p className="text-sm text-dim">Take a quiz after a lesson to see mastery here.</p>
+            <p className="text-sm text-muted">Take a quiz after a lesson to see mastery here.</p>
           ) : (
             <ul className="space-y-4">
               {profile.mastery.map((m) => (
                 <li key={m.concept_id}>
                   <div className="mb-1 flex justify-between text-sm">
-                    <span className="text-mist">{m.concept}</span>
-                    <span className="text-xs text-dim">{m.course}</span>
+                    <span className="text-body">{m.concept}</span>
+                    <span className="text-xs text-muted">{m.course}</span>
                   </div>
                   <MasteryBar score={m.score} />
                 </li>
@@ -85,17 +85,17 @@ export default function ProgressPage() {
         </section>
 
         <section className="glass p-6">
-          <h2 className="mb-4 text-lg font-medium text-white">Revision plan</h2>
+          <h2 className="mb-4 text-lg font-medium text-navy">Revision plan</h2>
           {!reviews.length ? (
-            <p className="text-sm text-dim">No reviews scheduled yet.</p>
+            <p className="text-sm text-muted">No reviews scheduled yet.</p>
           ) : (
             <ul className="space-y-2">
               {reviews.map((r) => (
-                <li key={r.concept_id} className="flex items-center justify-between rounded-xl border border-line bg-black/20 px-3 py-2 text-sm">
-                  <span className="text-mist">{r.concept}</span>
+                <li key={r.concept_id} className="flex items-center justify-between rounded-xl border border-line bg-soft px-3 py-2 text-sm">
+                  <span className="text-body">{r.concept}</span>
                   <span className="flex items-center gap-2">
-                    {r.due ? <Badge tone="warn">due now</Badge> : <span className="text-xs text-dim">{new Date(r.due_at).toLocaleDateString()}</span>}
-                    <Link href={`/classroom?course=${r.course_id}&q=${encodeURIComponent(r.concept)}`} className="text-xs text-aurora hover:underline">
+                    {r.due ? <Badge tone="warn">due now</Badge> : <span className="text-xs text-muted">{new Date(r.due_at).toLocaleDateString()}</span>}
+                    <Link href={`/classroom?course=${r.course_id}&q=${encodeURIComponent(r.concept)}`} className="text-xs text-brand hover:underline">
                       Review
                     </Link>
                   </span>
@@ -107,18 +107,18 @@ export default function ProgressPage() {
       </div>
 
       <section className="glass p-6">
-        <h2 className="mb-1 text-lg font-medium text-white">Recurring misconceptions</h2>
-        <p className="mb-4 text-xs text-dim">
+        <h2 className="mb-1 text-lg font-medium text-navy">Recurring misconceptions</h2>
+        <p className="mb-4 text-xs text-muted">
           Each one is linked to the quiz answer that showed it. Your teacher only mentions these when they are relevant.
         </p>
         {!profile?.misconceptions.length ? (
-          <p className="text-sm text-dim">None recorded.</p>
+          <p className="text-sm text-muted">None recorded.</p>
         ) : (
           <ul className="space-y-2">
             {profile.misconceptions.map((m) => (
-              <li key={m.id} className="flex items-start justify-between gap-4 rounded-xl border border-line bg-black/20 px-3 py-2 text-sm">
-                <span className="bn text-mist">{m.content}</span>
-                <button onClick={() => forget(m.id)} className="shrink-0 text-xs text-dim hover:text-bad">
+              <li key={m.id} className="flex items-start justify-between gap-4 rounded-xl border border-line bg-soft px-3 py-2 text-sm">
+                <span className="bn text-body">{m.content}</span>
+                <button onClick={() => forget(m.id)} className="shrink-0 text-xs text-muted hover:text-bad">
                   Forget
                 </button>
               </li>
@@ -133,8 +133,8 @@ export default function ProgressPage() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="glass p-5">
-      <div className="text-xs text-dim">{label}</div>
-      <div className="mt-1 text-3xl font-medium text-white">{value}</div>
+      <div className="text-xs text-muted">{label}</div>
+      <div className="mt-1 text-3xl font-medium text-navy">{value}</div>
     </div>
   );
 }

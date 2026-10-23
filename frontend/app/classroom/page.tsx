@@ -68,7 +68,7 @@ function NewLesson() {
   if (courses.length === 0 && !error) {
     return (
       <div className="glass mx-auto mt-10 max-w-xl p-8 text-center">
-        <p className="text-mist">Create a course and upload a lecture first.</p>
+        <p className="text-body">Create a course and upload a lecture first.</p>
         <Link href="/library" className="pill pill-primary mt-5 inline-block">
           Go to library
         </Link>
@@ -79,13 +79,13 @@ function NewLesson() {
   return (
     <div className="mx-auto max-w-3xl space-y-6 pt-8">
       <div className="text-center">
-        <h1 className="text-4xl font-medium text-white">
+        <h1 className="text-4xl font-medium text-navy">
           What should we learn <span className="text-gradient">today</span>?
         </h1>
-        <p className="mt-2 text-dim">Ask in Bangla, Banglish or English. Your teacher will use your course materials.</p>
+        <p className="mt-2 text-muted">Ask in Bangla, Banglish or English. Your teacher will use your course materials.</p>
       </div>
 
-      <form onSubmit={start} className="glass glow-card space-y-4 p-5">
+      <form onSubmit={start} className="glass space-y-4 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <CoursePicker courses={courses} value={courseId} onChange={setCourseId} />
           <LanguagePicker value={language} onChange={pickLanguage} />
@@ -109,7 +109,7 @@ function NewLesson() {
             {busy && <Spinner />} {busy ? "Preparing lesson…" : "Start lesson"}
           </button>
         </div>
-        {busy && <p className="bn text-center text-sm text-dim">শিক্ষক আপনার lecture notes পড়ছেন এবং lesson তৈরি করছেন…</p>}
+        {busy && <p className="bn text-center text-sm text-muted">শিক্ষক আপনার lecture notes পড়ছেন এবং lesson তৈরি করছেন…</p>}
       </form>
 
       <ErrorNote message={error} />
@@ -124,11 +124,11 @@ function NewLesson() {
 
       {recent.length > 0 && (
         <div className="glass p-5">
-          <h2 className="mb-3 text-sm text-dim">Recent lessons in this course</h2>
+          <h2 className="mb-3 text-sm text-muted">Recent lessons in this course</h2>
           <ul className="space-y-1">
             {recent.map((l) => (
               <li key={l.id}>
-                <Link href={`/classroom/${l.id}`} className="bn block rounded-lg px-2 py-1.5 text-sm text-mist hover:bg-white/5">
+                <Link href={`/classroom/${l.id}`} className="bn block rounded-lg px-2 py-1.5 text-sm text-body hover:bg-navy/5">
                   {l.title}
                 </Link>
               </li>

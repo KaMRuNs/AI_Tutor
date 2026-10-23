@@ -1,34 +1,31 @@
 @import "tailwindcss";
 
-/* Aurora-green classroom theme, inspired by the reference recording. */
+/* Light edtech theme modelled on shikho.com: navy text, magenta primary, blue/yellow accents, pastel cards. */
 @theme {
-  --color-ink: #06140d;
-  --color-ink-2: #0b1f15;
-  --color-panel: rgb(18 40 28 / 0.62);
-  --color-line: rgb(170 230 190 / 0.14);
-  --color-mist: #c9dccf;
-  --color-dim: #8aa596;
-  --color-aurora: #9be15d;
-  --color-aurora-2: #5fd38d;
-  --color-warn: #f5c35b;
-  --color-bad: #ff8a7a;
-  --font-sans: var(--font-inter), var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
-  --font-bangla: var(--font-hind), var(--font-inter), sans-serif;
+  --color-navy: #232c6a;
+  --color-body: #454c7e;
+  --color-muted: #676ea0;
+  --color-soft: #f3f5f9;
+  --color-page: #ffffff;
+  --color-line: #d7defa;
+  --color-brand: #cf278d;
+  --color-brand-dark: #c0187e;
+  --color-brand-soft: #ffecfa;
+  --color-blue: #5468ff;
+  --color-blue-dark: #354895;
+  --color-blue-soft: #eceeff;
+  --color-sun: #ffb612;
+  --color-warn: #ed9511;
+  --color-bad: #e5484d;
+  --color-ok: #1f9d6b;
+  --font-sans: var(--font-poppins), var(--font-baloo), ui-sans-serif, system-ui, sans-serif;
+  --font-bangla: var(--font-baloo), var(--font-poppins), sans-serif;
 }
 
 html,
 body {
-  background: var(--color-ink);
-  color: var(--color-mist);
-}
-
-body {
-  min-height: 100vh;
-  background:
-    radial-gradient(1200px 600px at 75% 110%, rgb(155 225 93 / 0.22), transparent 60%),
-    radial-gradient(900px 500px at 85% -10%, rgb(95 211 141 / 0.14), transparent 60%),
-    linear-gradient(180deg, #0a1d13 0%, #06140d 60%, #081a10 100%);
-  background-attachment: fixed;
+  background: var(--color-page);
+  color: var(--color-body);
 }
 
 :lang(bn),
@@ -36,114 +33,94 @@ body {
   font-family: var(--font-bangla);
 }
 
+h1,
+h2,
+h3 {
+  color: var(--color-navy);
+  font-family: var(--font-bangla);
+  font-weight: 700;
+}
+
+/* Cards */
 .glass {
-  background: var(--color-panel);
+  background: #fff;
   border: 1px solid var(--color-line);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-radius: 1.25rem;
-  box-shadow: 0 20px 60px -30px rgb(0 0 0 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.04);
+  box-shadow: 0 10px 30px -18px rgb(35 44 106 / 0.25);
 }
 
-.glow-card {
-  position: relative;
-}
-.glow-card::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -90px;
-  width: 2px;
-  height: 90px;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, transparent, rgb(200 255 170 / 0.9));
-  filter: blur(1px);
-  box-shadow: 0 0 30px 8px rgb(155 225 93 / 0.35);
-}
+.pastel-blue { background: linear-gradient(135deg, #daf6ff 0%, #c9dbff 100%); }
+.pastel-pink { background: linear-gradient(135deg, #ffd0cd 0%, #ffc9c9 100%); }
+.pastel-sun { background: linear-gradient(135deg, #fff1d6 0%, #ffe5be 100%); }
+.pastel-lilac { background: linear-gradient(135deg, #f3e8ff 0%, #ffecfa 100%); }
 
+/* Buttons */
 .pill {
-  border-radius: 9999px;
-  padding: 0.6rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid var(--color-line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
 }
 .pill-primary {
-  background: #f3fbef;
-  color: #0b1f15;
-  box-shadow: 0 0 24px rgb(220 255 200 / 0.35);
+  background: var(--color-brand);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgb(207 39 141 / 0.6);
 }
-.pill-primary:hover {
-  box-shadow: 0 0 34px rgb(220 255 200 / 0.55);
+.pill-primary:hover { background: var(--color-brand-dark); }
+.pill-blue {
+  background: var(--color-blue);
+  color: #fff;
 }
+.pill-blue:hover { background: #475dff; }
 .pill-ghost {
-  background: rgb(255 255 255 / 0.04);
-  color: var(--color-mist);
+  background: #fff;
+  color: var(--color-navy);
+  border-color: var(--color-line);
 }
 .pill-ghost:hover {
-  background: rgb(255 255 255 / 0.09);
+  border-color: var(--color-blue);
+  color: var(--color-blue);
 }
 .pill:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .field {
   width: 100%;
-  background: rgb(0 0 0 / 0.25);
+  background: #fff;
   border: 1px solid var(--color-line);
-  border-radius: 0.9rem;
+  border-radius: 0.75rem;
   padding: 0.7rem 0.95rem;
-  color: var(--color-mist);
+  color: var(--color-navy);
   outline: none;
 }
+.field::placeholder { color: #9aa0c3; }
 .field:focus {
-  border-color: rgb(155 225 93 / 0.55);
-  box-shadow: 0 0 0 3px rgb(155 225 93 / 0.12);
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgb(84 104 255 / 0.15);
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #b6f07a, #5fd38d);
+  background: linear-gradient(90deg, #cf278d, #5468ff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Starfield */
-.stars {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient(1px 1px at 12% 22%, #fff9 50%, transparent 51%),
-    radial-gradient(1px 1px at 28% 68%, #fff7 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 44% 34%, #fffa 50%, transparent 51%),
-    radial-gradient(1px 1px at 62% 12%, #fff8 50%, transparent 51%),
-    radial-gradient(1px 1px at 71% 52%, #fff6 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 84% 28%, #fffb 50%, transparent 51%),
-    radial-gradient(1px 1px at 91% 74%, #fff7 50%, transparent 51%),
-    radial-gradient(1px 1px at 55% 86%, #fff5 50%, transparent 51%),
-    radial-gradient(1px 1px at 8% 82%, #fff6 50%, transparent 51%);
-  animation: twinkle 6s ease-in-out infinite alternate;
-}
-@keyframes twinkle {
-  from { opacity: 0.55; }
-  to { opacity: 1; }
-}
-
-/* Planet horizon used on the dashboard hero */
-.planet {
-  position: absolute;
-  left: -15%;
-  right: 35%;
-  bottom: -340px;
-  height: 460px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 0%, #1d3b28 0%, #0a1a11 55%, #06140d 70%);
-  box-shadow: 0 -2px 0 rgb(200 255 170 / 0.25), 0 -30px 80px -20px rgb(155 225 93 / 0.35);
-  pointer-events: none;
+/* Hero decoration */
+.hero-bg {
+  background:
+    radial-gradient(600px 300px at 90% 10%, rgb(84 104 255 / 0.12), transparent 70%),
+    radial-gradient(500px 300px at 5% 90%, rgb(207 39 141 / 0.1), transparent 70%),
+    linear-gradient(180deg, #f3f5f9 0%, #ffffff 100%);
 }
 
 /* Whiteboard animations */
@@ -151,9 +128,7 @@ body {
   from { opacity: 0; transform: translateY(6px) scale(0.98); }
   to { opacity: 1; transform: none; }
 }
-.board-new {
-  animation: pop 0.45s ease-out both;
-}
+.board-new { animation: pop 0.45s ease-out both; }
 @keyframes draw {
   from { stroke-dashoffset: 400; }
   to { stroke-dashoffset: 0; }
@@ -163,17 +138,15 @@ body {
   animation: draw 0.7s ease-out both;
 }
 @keyframes pulse-ring {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(155 225 93 / 0.5); }
-  50% { box-shadow: 0 0 0 8px rgb(155 225 93 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgb(207 39 141 / 0.45); }
+  50% { box-shadow: 0 0 0 8px rgb(207 39 141 / 0); }
 }
-.recording {
-  animation: pulse-ring 1.2s infinite;
-}
+.recording { animation: pulse-ring 1.2s infinite; }
 
 .katex {
-  color: #eaf7e4;
+  color: var(--color-navy);
   font-size: 1.15em;
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: rgb(170 230 190 / 0.18); border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: #d7defa; border-radius: 8px; }

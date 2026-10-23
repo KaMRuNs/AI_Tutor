@@ -77,8 +77,8 @@ function Library() {
     <div className="space-y-6 pt-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-medium text-white">Course library</h1>
-          <p className="mt-1 text-sm text-dim">Upload lecture PDFs or notes. They become searchable for your teacher.</p>
+          <h1 className="text-3xl font-medium text-navy">Course library</h1>
+          <p className="mt-1 text-sm text-muted">Upload lecture PDFs or notes. They become searchable for your teacher.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {courses.length > 0 && <CoursePicker courses={courses} value={courseId} onChange={selectCourse} />}
@@ -108,18 +108,18 @@ function Library() {
             }}
             onClick={() => input.current?.click()}
             className={`glass flex cursor-pointer flex-col items-center justify-center gap-3 border-dashed py-14 text-center transition ${
-              drag ? "!border-aurora/70" : ""
+              drag ? "!border-brand/70" : ""
             }`}
           >
             <input ref={input} type="file" accept=".pdf,.txt" multiple hidden onChange={(e) => upload(e.target.files)} />
             {uploading ? <Spinner className="!h-6 !w-6" /> : <div className="text-3xl">📄</div>}
-            <div className="text-white">Drop PDF or TXT files here, or click to browse</div>
-            <div className="text-xs text-dim">Scanned pages are read with Gemma vision · max 40 MB</div>
+            <div className="text-navy">Drop PDF or TXT files here, or click to browse</div>
+            <div className="text-xs text-muted">Scanned pages are read with Gemma vision · max 40 MB</div>
           </div>
 
           <div className="glass overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="text-left text-xs text-dim">
+              <thead className="text-left text-xs text-muted">
                 <tr className="border-b border-line">
                   <th className="px-5 py-3 font-normal">Document</th>
                   <th className="px-5 py-3 font-normal">Pages</th>
@@ -131,7 +131,7 @@ function Library() {
               <tbody>
                 {docs.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-5 py-6 text-dim">
+                    <td colSpan={5} className="px-5 py-6 text-muted">
                       No documents yet.
                     </td>
                   </tr>
@@ -139,16 +139,16 @@ function Library() {
                 {docs.map((d) => (
                   <tr key={d.id} className="border-b border-line/50 last:border-0">
                     <td className="px-5 py-3">
-                      <a href={api.documentUrl(d.id)} target="_blank" rel="noreferrer" className="text-mist hover:text-aurora">
+                      <a href={api.documentUrl(d.id)} target="_blank" rel="noreferrer" className="text-body hover:text-brand">
                         {d.filename}
                       </a>
                       {d.error && <div className="text-xs text-bad">{d.error}</div>}
                     </td>
-                    <td className="px-5 py-3 text-dim">{d.page_count || "—"}</td>
-                    <td className="px-5 py-3 text-dim">{d.chunks || "—"}</td>
+                    <td className="px-5 py-3 text-muted">{d.page_count || "—"}</td>
+                    <td className="px-5 py-3 text-muted">{d.chunks || "—"}</td>
                     <td className="px-5 py-3">
                       {d.status === "processing" ? (
-                        <span className="inline-flex items-center gap-2 text-dim">
+                        <span className="inline-flex items-center gap-2 text-muted">
                           <Spinner /> processing
                         </span>
                       ) : (
@@ -157,7 +157,7 @@ function Library() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <button
-                        className="text-xs text-dim hover:text-bad"
+                        className="text-xs text-muted hover:text-bad"
                         onClick={async () => {
                           if (!confirm(`Delete ${d.filename}?`)) return;
                           await api.deleteDocument(d.id);
@@ -182,7 +182,7 @@ function Library() {
           )}
         </>
       ) : (
-        <p className="text-dim">Create a course to start uploading materials.</p>
+        <p className="text-muted">Create a course to start uploading materials.</p>
       )}
     </div>
   );

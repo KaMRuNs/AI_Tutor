@@ -182,10 +182,10 @@ export default function ClassroomLesson() {
     <div className="space-y-4 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <Link href="/classroom" className="text-xs text-dim hover:text-mist">
+          <Link href="/classroom" className="text-xs text-muted hover:text-body">
             ← New lesson
           </Link>
-          <h1 className="bn truncate text-2xl font-medium text-white">{lesson?.title ?? "Loading lesson…"}</h1>
+          <h1 className="bn truncate text-2xl font-medium text-navy">{lesson?.title ?? "Loading lesson…"}</h1>
           {lesson && (
             <div className="mt-1 flex flex-wrap gap-2">
               <Badge>{lesson.language}</Badge>
@@ -199,20 +199,20 @@ export default function ClassroomLesson() {
         <div className="flex flex-wrap items-center gap-2 text-sm">
           {hasTTS && (
             <>
-              <label className="flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-dim">
-                <input type="checkbox" className="accent-[#9be15d]" checked={voiceOn} onChange={(e) => {
+              <label className="flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-muted">
+                <input type="checkbox" className="accent-[#cf278d]" checked={voiceOn} onChange={(e) => {
                   setVoiceOn(e.target.checked);
                   if (!e.target.checked) stopSpeaking();
                 }} />
                 Voice
               </label>
-              <label className="flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-dim">
-                <input type="checkbox" className="accent-[#9be15d]" checked={autoPlay} onChange={(e) => setAutoPlay(e.target.checked)} disabled={!voiceOn} />
+              <label className="flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-muted">
+                <input type="checkbox" className="accent-[#cf278d]" checked={autoPlay} onChange={(e) => setAutoPlay(e.target.checked)} disabled={!voiceOn} />
                 Auto-play
               </label>
               <select className="field !w-auto !rounded-full !py-1.5 text-xs" value={rate} onChange={(e) => setRate(Number(e.target.value))} aria-label="Speech speed">
                 {[0.8, 1, 1.2].map((r) => (
-                  <option key={r} value={r} className="bg-ink-2">
+                  <option key={r} value={r} className="bg-white">
                     {r}×
                   </option>
                 ))}
@@ -236,11 +236,11 @@ export default function ClassroomLesson() {
       <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
         {/* Board */}
         <section className={`glass flex flex-col p-3 ${tab === "board" ? "" : "hidden lg:flex"}`}>
-          <div className="min-h-[340px] flex-1 rounded-xl border border-line bg-black/25 p-2">
+          <div className="min-h-[340px] flex-1 rounded-xl border border-line bg-soft p-2">
             {boardSteps.length ? (
               <Whiteboard steps={boardSteps} current={current} />
             ) : (
-              <div className="flex h-full items-center justify-center text-dim">
+              <div className="flex h-full items-center justify-center text-muted">
                 <Spinner />
               </div>
             )}
@@ -254,7 +254,7 @@ export default function ClassroomLesson() {
                 <button
                   key={i}
                   onClick={() => seen.current.has(i) && send("goto", { index: i })}
-                  className={`h-2 rounded-full transition-all ${i === current ? "w-8 bg-aurora" : seen.current.has(i) ? "w-2 bg-aurora/50" : "w-2 bg-white/15"}`}
+                  className={`h-2 rounded-full transition-all ${i === current ? "w-8 bg-brand" : seen.current.has(i) ? "w-2 bg-brand/50" : "w-2 bg-navy/15"}`}
                   aria-label={`Step ${i + 1}`}
                 />
               ))}
@@ -272,15 +272,15 @@ export default function ClassroomLesson() {
               <TranscriptRow key={i} entry={t} active={t.kind === "step" && t.index === current} />
             ))}
             {thinking && (
-              <div className="flex items-center gap-2 text-sm text-dim">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <Spinner /> <span className="bn">শিক্ষক ভাবছেন…</span>
               </div>
             )}
             {checkQ && atEnd && (
-              <div className="rounded-2xl border border-aurora/30 bg-aurora/5 p-3">
-                <div className="mb-1 text-xs text-aurora">Check your understanding</div>
-                <div className="bn text-sm text-white">{checkQ}</div>
-                <div className="mt-2 text-xs text-dim">Type your answer below and the teacher will respond, or take the quiz.</div>
+              <div className="rounded-2xl border border-brand/30 bg-brand/5 p-3">
+                <div className="mb-1 text-xs text-brand">Check your understanding</div>
+                <div className="bn text-sm text-navy">{checkQ}</div>
+                <div className="mt-2 text-xs text-muted">Type your answer below and the teacher will respond, or take the quiz.</div>
               </div>
             )}
           </div>
@@ -291,7 +291,7 @@ export default function ClassroomLesson() {
                 type="button"
                 onClick={toggleMic}
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
-                  listening ? "recording border-aurora bg-aurora text-ink" : "border-line text-mist hover:border-aurora/50"
+                  listening ? "recording border-brand bg-brand text-white" : "border-line text-body hover:border-brand/50"
                 }`}
                 aria-label={listening ? "Stop recording" : "Ask by voice"}
                 title="Push to talk"
@@ -321,7 +321,7 @@ export default function ClassroomLesson() {
 
       {atEnd && (
         <section className="glass p-5">
-          <h2 className="mb-3 text-lg font-medium text-white">Quiz</h2>
+          <h2 className="mb-3 text-lg font-medium text-navy">Quiz</h2>
           <Quiz lessonId={lessonId} />
         </section>
       )}
@@ -333,7 +333,7 @@ function TranscriptRow({ entry, active }: { entry: TranscriptEntry; active: bool
   if (entry.kind === "student") {
     return (
       <div className="flex justify-end">
-        <div className="bn max-w-[85%] rounded-2xl rounded-br-md bg-aurora/15 px-3 py-2 text-sm text-white">{entry.text}</div>
+        <div className="bn max-w-[85%] rounded-2xl rounded-br-md bg-brand/15 px-3 py-2 text-sm text-navy">{entry.text}</div>
       </div>
     );
   }
@@ -341,9 +341,9 @@ function TranscriptRow({ entry, active }: { entry: TranscriptEntry; active: bool
     return <div className="bn rounded-xl bg-bad/10 px-3 py-2 text-sm text-bad">{entry.text}</div>;
   }
   return (
-    <div className={`rounded-2xl border px-3 py-2 transition ${active ? "border-aurora/40 bg-aurora/5" : "border-transparent"}`}>
-      {entry.kind === "step" && <div className="mb-1 text-[11px] tracking-wide text-dim uppercase">Step {entry.index! + 1}</div>}
-      <p className="bn text-[15px] leading-relaxed text-mist">{entry.text}</p>
+    <div className={`rounded-2xl border px-3 py-2 transition ${active ? "border-brand/40 bg-brand/5" : "border-transparent"}`}>
+      {entry.kind === "step" && <div className="mb-1 text-[11px] tracking-wide text-muted uppercase">Step {entry.index! + 1}</div>}
+      <p className="bn text-[15px] leading-relaxed text-body">{entry.text}</p>
       {!!entry.citations?.length && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {entry.citations.map((c) => (
@@ -352,7 +352,7 @@ function TranscriptRow({ entry, active }: { entry: TranscriptEntry; active: bool
               href={api.documentUrl(c.document_id, c.page)}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-line px-2 py-0.5 text-[11px] text-dim hover:border-aurora/50 hover:text-aurora"
+              className="rounded-full border border-line px-2 py-0.5 text-[11px] text-muted hover:border-brand/50 hover:text-brand"
             >
               📖 {c.document} · p.{c.page}
             </a>
