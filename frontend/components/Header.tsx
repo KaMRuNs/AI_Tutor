@@ -4,39 +4,51 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/", label: "Home" },
-  { href: "/library", label: "Library" },
-  { href: "/classroom", label: "Classroom" },
-  { href: "/progress", label: "Progress" },
+  { href: "/", label: "হোম" },
+  { href: "/library", label: "লাইব্রেরি" },
+  { href: "/classroom", label: "ক্লাসরুম" },
+  { href: "/progress", label: "অগ্রগতি" },
 ];
+
+export function Logo() {
+  return (
+    <Link href="/" className="flex shrink-0 items-center gap-2">
+      <span className="bn flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white">শি</span>
+      <span className="bn hidden text-xl font-bold text-navy sm:inline">
+        শিক্ষক<span className="text-brand">AI</span>
+      </span>
+    </Link>
+  );
+}
 
 export function Header() {
   const path = usePathname();
   return (
-    <header className="mx-auto flex w-full max-w-7xl items-center gap-6 px-4 py-6 sm:px-6">
-      <Link href="/" className="shrink-0 text-lg font-semibold tracking-wide text-white">
-        SHIKKHOK<span className="text-aurora">.AI</span>
-      </Link>
-      <div className="hidden h-px flex-1 bg-gradient-to-r from-white/30 to-transparent sm:block" />
-      <nav className="flex flex-1 justify-end gap-1 sm:flex-none sm:gap-4">
-        {NAV.map((n) => {
-          const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
-          return (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={`rounded-full px-3 py-1.5 text-sm transition ${
-                active ? "text-white" : "text-dim hover:text-mist"
-              }`}
-            >
-              {n.label}
-            </Link>
-          );
-        })}
-      </nav>
-      <Link href="/classroom" className="pill pill-ghost hidden md:inline-block">
-        Start learning
-      </Link>
+    <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6">
+        <Logo />
+        <nav className="flex min-w-0 flex-1 justify-end gap-0.5 overflow-x-auto sm:justify-center sm:gap-2">
+          {NAV.map((n) => {
+            const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
+            return (
+              <Link
+                key={n.href}
+                href={n.href}
+                className={`bn shrink-0 rounded-lg px-2 py-1.5 text-[15px] sm:px-3 font-medium transition ${
+                  active ? "bg-brand-soft text-brand" : "text-body hover:text-brand"
+                }`}
+              >
+                {n.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="hidden md:block">
+          <Link href="/classroom" className="bn pill pill-primary !py-2">
+            শিখতে শুরু করো
+          </Link>
+        </div>
+      </div>
     </header>
   );
 }

@@ -6,9 +6,9 @@ import type { BoardCommand } from "@/lib/types";
 import { anchor, BOARD_W, buildBoard, centerOf, type Placed } from "./layout";
 
 const COLORS = {
-  accent: { fill: "rgba(155,225,93,0.28)", stroke: "#9be15d" },
-  success: { fill: "rgba(95,211,141,0.3)", stroke: "#5fd38d" },
-  warning: { fill: "rgba(245,195,91,0.3)", stroke: "#f5c35b" },
+  accent: { fill: "rgba(207,39,141,0.14)", stroke: "#cf278d" },
+  success: { fill: "rgba(31,157,107,0.14)", stroke: "#1f9d6b" },
+  warning: { fill: "rgba(255,182,18,0.22)", stroke: "#ed9511" },
 };
 
 function Equation({ latex }: { latex: string }) {
@@ -20,7 +20,7 @@ function Equation({ latex }: { latex: string }) {
       return null;
     }
   }, [latex]);
-  if (html === null) return <code className="text-mist">{latex}</code>;
+  if (html === null) return <code className="text-body">{latex}</code>;
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
@@ -39,10 +39,10 @@ export function Whiteboard({ steps, current }: { steps: BoardCommand[][]; curren
     >
       <defs>
         <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="#b6f07a" />
+          <path d="M0,0 L10,5 L0,10 z" fill="#5468ff" />
         </marker>
         <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M40 0 L0 0 0 40" fill="none" stroke="rgba(170,230,190,0.05)" />
+          <path d="M40 0 L0 0 0 40" fill="none" stroke="rgba(84,104,255,0.07)" />
         </pattern>
       </defs>
       <rect width={BOARD_W} height={model.height} fill="url(#grid)" />
@@ -63,14 +63,14 @@ export function Whiteboard({ steps, current }: { steps: BoardCommand[][]; curren
               y1={p1.y}
               x2={p2.x}
               y2={p2.y}
-              stroke={hl ? COLORS[hl.color].stroke : arrow && cmd.action === "draw_arrow" ? "#b6f07a" : "rgba(220,240,225,0.6)"}
+              stroke={hl ? COLORS[hl.color].stroke : arrow && cmd.action === "draw_arrow" ? "#5468ff" : "#454c7e"}
               strokeWidth={hl ? 3 : 2}
               strokeDasharray={cmd.action === "draw_arrow" ? "6 5" : undefined}
               markerEnd={arrow ? "url(#arrowhead)" : undefined}
               className={isNew(cmd.id) ? "board-line-new" : undefined}
             />
             {cmd.label && (
-              <text x={(p1.x + p2.x) / 2 + 6} y={(p1.y + p2.y) / 2 - 6} fill="#c9dccf" fontSize="14" className="bn">
+              <text x={(p1.x + p2.x) / 2 + 6} y={(p1.y + p2.y) / 2 - 6} fill="#454c7e" fontSize="14" className="bn">
                 {cmd.label}
               </text>
             )}
@@ -93,7 +93,7 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
     case "heading":
       return (
         <foreignObject x={p.x} y={p.y} width={p.w} height={p.h}>
-          <div className="bn truncate text-[28px] font-semibold text-white" style={{ textShadow: ring ? `0 0 18px ${ring.stroke}` : undefined }}>
+          <div className="bn truncate text-[28px] font-semibold text-navy" style={ring ? { color: ring.stroke } : undefined}>
             {p.cmd.text}
           </div>
         </foreignObject>
@@ -103,7 +103,7 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
         <foreignObject x={p.x} y={p.y} width={p.w} height={p.h}>
           <div
             className={`bn rounded-xl border px-3 py-2 text-[17px] leading-[26px] ${
-              p.cmd.style === "note" ? "border-warn/30 bg-warn/5 text-warn" : "border-white/10 bg-white/[0.03] text-mist"
+              p.cmd.style === "note" ? "border-warn/30 bg-warn/5 text-warn" : "border-line bg-soft text-body"
             }`}
             style={ring ? { borderColor: ring.stroke, boxShadow: `0 0 16px ${ring.fill}` } : undefined}
           >
@@ -115,7 +115,7 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
       return (
         <foreignObject x={p.x} y={p.y} width={p.w} height={p.h}>
           <div
-            className="flex h-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/20"
+            className="flex h-full items-center justify-center overflow-hidden rounded-xl border border-line bg-soft"
             style={ring ? { borderColor: ring.stroke } : undefined}
           >
             <Equation latex={p.cmd.latex} />
@@ -127,7 +127,7 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
       return (
         <g>
           {p.cmd.label && (
-            <text x={p.x} y={p.y + 16} fill="#8aa596" fontSize="15" className="bn">
+            <text x={p.x} y={p.y + 16} fill="#676ea0" fontSize="15" className="bn">
               {p.cmd.label}
             </text>
           )}
@@ -142,8 +142,8 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
                   width={p.cell - 4}
                   height={p.cell - 4}
                   rx={10}
-                  fill={on ? col!.fill : "rgba(255,255,255,0.04)"}
-                  stroke={col ? col.stroke : "rgba(170,230,190,0.35)"}
+                  fill={on ? col!.fill : "#ffffff"}
+                  stroke={col ? col.stroke : "#5468ff"}
                   strokeWidth={on ? 2.5 : 1.5}
                   style={{ transition: "all .35s ease" }}
                 />
@@ -152,13 +152,13 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
                   y={top + p.cell / 2}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill="#f1fbec"
+                  fill="#232c6a"
                   fontSize={Math.min(22, p.cell / 2.4)}
                   fontWeight={on ? 700 : 500}
                 >
                   {String(v)}
                 </text>
-                <text x={p.x + i * p.cell + p.cell / 2} y={top + p.cell + 12} textAnchor="middle" fill="#6f8a7b" fontSize="12">
+                <text x={p.x + i * p.cell + p.cell / 2} y={top + p.cell + 12} textAnchor="middle" fill="#9aa0c3" fontSize="12">
                   {i}
                 </text>
               </g>
@@ -176,12 +176,12 @@ function PlacedItem({ p, hl }: { p: Placed; hl?: { indices?: number[]; color: ke
             cx={c.x}
             cy={c.y}
             r={p.w / 2}
-            fill={col ? col.fill : "rgba(18,40,28,0.95)"}
-            stroke={col ? col.stroke : "rgba(170,230,190,0.55)"}
+            fill={col ? col.fill : "#eceeff"}
+            stroke={col ? col.stroke : "#5468ff"}
             strokeWidth={col ? 3 : 1.8}
             style={{ transition: "all .35s ease" }}
           />
-          <text x={c.x} y={c.y} textAnchor="middle" dominantBaseline="central" fill="#f1fbec" fontSize="15" className="bn">
+          <text x={c.x} y={c.y} textAnchor="middle" dominantBaseline="central" fill="#232c6a" fontSize="15" className="bn">
             {p.cmd.label.length > 6 ? p.cmd.label.slice(0, 6) + "…" : p.cmd.label}
           </text>
         </g>

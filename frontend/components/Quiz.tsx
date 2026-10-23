@@ -41,7 +41,7 @@ export function Quiz({ lessonId }: { lessonId: number }) {
   if (!items) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="text-sm text-dim">Check your understanding. Results update your progress and revision plan.</p>
+        <p className="text-sm text-muted">Check your understanding. Results update your progress and revision plan.</p>
         <button className="pill pill-primary inline-flex items-center gap-2" onClick={load} disabled={busy}>
           {busy && <Spinner />} {busy ? "Writing questions…" : "Take a quick quiz"}
         </button>
@@ -57,8 +57,8 @@ export function Quiz({ lessonId }: { lessonId: number }) {
       {items.map((q, i) => {
         const r = byId.get(q.id);
         return (
-          <div key={q.id} className="rounded-2xl border border-line bg-black/20 p-4">
-            <div className="bn mb-3 text-sm text-white">
+          <div key={q.id} className="rounded-2xl border border-line bg-soft p-4">
+            <div className="bn mb-3 text-sm text-navy">
               {i + 1}. {q.question}
             </div>
             {q.type === "mcq" && q.options ? (
@@ -67,13 +67,13 @@ export function Quiz({ lessonId }: { lessonId: number }) {
                   <label
                     key={o}
                     className={`bn flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm ${
-                      answers[q.id] === o ? "border-aurora/60 bg-aurora/10" : "border-line"
+                      answers[q.id] === o ? "border-brand/60 bg-brand/10" : "border-line"
                     }`}
                   >
                     <input
                       type="radio"
                       name={`q${q.id}`}
-                      className="accent-[#9be15d]"
+                      className="accent-[#cf278d]"
                       checked={answers[q.id] === o}
                       onChange={() => setAnswers({ ...answers, [q.id]: o })}
                       disabled={!!result}
@@ -92,9 +92,9 @@ export function Quiz({ lessonId }: { lessonId: number }) {
               />
             )}
             {r && (
-              <div className={`bn mt-3 rounded-xl px-3 py-2 text-sm ${r.correct ? "bg-aurora/10 text-aurora" : "bg-bad/10 text-bad"}`}>
+              <div className={`bn mt-3 rounded-xl px-3 py-2 text-sm ${r.correct ? "bg-ok/10 text-ok" : "bg-bad/10 text-bad"}`}>
                 {r.correct ? "✓ Correct. " : `✗ Answer: ${r.answer}. `}
-                <span className="text-mist">{r.explanation}</span>
+                <span className="text-body">{r.explanation}</span>
               </div>
             )}
           </div>
@@ -102,9 +102,9 @@ export function Quiz({ lessonId }: { lessonId: number }) {
       })}
       <ErrorNote message={error} />
       {result ? (
-        <div className="space-y-3 rounded-2xl border border-line bg-black/20 p-4">
+        <div className="space-y-3 rounded-2xl border border-line bg-soft p-4">
           <div className="flex items-center justify-between">
-            <span className="text-white">
+            <span className="text-navy">
               Score {result.score} / {result.total}
             </span>
             <button className="pill pill-ghost !py-1.5 text-xs" onClick={load}>

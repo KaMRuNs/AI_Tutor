@@ -20,7 +20,7 @@ export function CoursePicker({
     >
       {value === null && <option value="">Select a course</option>}
       {courses.map((c) => (
-        <option key={c.id} value={c.id} className="bg-ink-2">
+        <option key={c.id} value={c.id} className="bg-white">
           {c.name}
         </option>
       ))}
